@@ -26,11 +26,11 @@ if (-not (Test-Path $view_file)) {
     }
 
     if($failure) {
-        Write-Host "View at" $view "was NOT successfully written."
+        Write-Host "View at" $view "was NOT successfully written to database."
         Write-Host "Error:"
 
         throw $exception
     } else {
-        Write-Host "View at" $view "successfully written."
+        Write-Host "View at" $view "successfully written to database."
     }
 }
