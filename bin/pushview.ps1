@@ -6,9 +6,35 @@
 # The command itself can be used to execute arbitrary scripts, so be careful.
 ##
 param(
-    [string]$server="SQL-DEV",
+    [string]$server,
     [Parameter(Mandatory=$TRUE)][string]$view
 )
+
+# Look for configuration files if configuration was not passed.
+if(($server -eq "")) {
+    [System.Reflection.Assembly]::LoadWithPartialName("System.Web.Extensions")
+
+    $json = New-Object System.Web.Script.Serialization.JavaScriptSerializer
+    $invocation = (Get-Variable MyInvocation).Value.MyCommand
+
+    $location = (Get-Location -psProvider FileSystem).Path
+    $script_location = Split-Path -parent (Split-Path -parent $invocation.Path)
+    $config_file = "\config.json";
+
+    if (Test-Path ("FileSystem::" + $location + $config_file)) {
+        $data = Get-Content ($location + $config_file) | Out-String
+
+        $config = $json.DeserializeObject($data)
+    } elseif(Test-Path ("FileSystem::" + $script_location + $config_file)) {
+        $data = Get-Content ($script_location + $config_file) | Out-String
+
+        $config = $json.DeserializeObject($data)
+    } else {
+        throw [System.IO.FileNotFoundException] "Missing configuration options and no config files found."
+    }
+
+    $server = $config.server
+}
 
 $view_file = "FileSystem::" + $view
 
