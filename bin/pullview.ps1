@@ -3,7 +3,6 @@ param(
     [string]$database="ares",
     [string]$path=".",
     [Parameter(Mandatory=$TRUE)][string]$view
-
 )
 
 $schema = "dbo"

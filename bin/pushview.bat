@@ -1,2 +1,2 @@
 @ECHO OFF
-powershell -ExecutionPolicy ByPass -File pushview.ps1 %*
+sqlps -ExecutionPolicy ByPass -File pushview.ps1 %*
