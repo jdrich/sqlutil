@@ -1,2 +1,2 @@
 @ECHO OFF
-sqlps -ExecutionPolicy ByPass -File pushview.ps1 %*
+sqlps -ExecutionPolicy ByPass -File %~dp0\pushview.ps1 %*
