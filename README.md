@@ -14,7 +14,7 @@ Studio to be installed on the local machine.
 
 Make sure that sqlutil/bin is in your PATH.
 
-*All parameters but `--view` are optional**
+*All parameters but `--view` are optional*\*
 
 Pull a view from the database
 
@@ -35,7 +35,7 @@ Push a single view to the database
     $ pushview.sh --server SOME-SERVER\instance --view ~/database/views/SomeView.sql
     View at /home/user/database/views/SomeView.sql successfully written to database.
 
-** To prevent having to pass optional parameters, create a file config.json one level above the sqlutil bin directory or where you run the script with the following format:*
+\**To prevent having to pass optional parameters, create a file config.json one level above the sqlutil bin directory or where you run the script with the following format:*
 
     {
         "server": $connection_string,
