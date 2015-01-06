@@ -1,2 +1,6 @@
 #!/bin/sh
-sqlps -ExecutionPolicy ByPass -File pushview.ps1 $@
+dir=$(dirname $0)
+script="/pushview.ps1"
+
+file=$dir$script
+sqlps -ExecutionPolicy ByPass -File $file $@

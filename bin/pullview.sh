@@ -1,2 +1,6 @@
 #!/bin/sh
-powershell -ExecutionPolicy ByPass -File pullview.ps1 $@
+dir=$(dirname $0)
+script="/pullview.ps1"
+
+file=$dir$script
+powershell -ExecutionPolicy ByPass -File $file $@
