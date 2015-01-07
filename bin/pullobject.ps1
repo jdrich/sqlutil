@@ -70,18 +70,34 @@ if($object -ne "pull-all") {
     $objects = $objects | Where-object { $_.Name -eq $object }
 }
 
+$scripter.Options.ScriptSchema = $TRUE
+$scripter.Options.ScriptData = $FALSE
+
+$scripter.Options.IncludeHeaders  = $TRUE
+$scripter.Options.IncludeDatabaseContext = $TRUE
+$scripter.Options.ToFileOnly = $TRUE
+$scripter.Options.AnsiFile = $TRUE
+$scripter.Options.AnsiPadding = $TRUE
+$scripter.Options.ExtendedProperties = $TRUE
+
+$scripter.Options.SchemaQualify = $TRUE
+$scripter.Options.SchemaQualifyForeignKeysReferences = $TRUE
+
+$scripter.Options.Permissions = $TRUE
+$scripter.Options.Indexes = $TRUE
+$scripter.Options.DriAllConstraints = $TRUE
+$scripter.Options.DriIndexes = $TRUE
+$scripter.Options.DriClustered = $TRUE
+$scripter.Options.DriNonClustered = $TRUE
+$scripter.Options.NonClusteredIndexes = $TRUE
+$scripter.Options.ClusteredIndexes = $TRUE
+$scripter.Options.FullTextIndexes = $TRUE
+
 foreach($db_object in $objects) {
     if ($db_object -ne $null) {
-        $scripter.Options.IncludeHeaders  = $TRUE
-        $scripter.Options.IncludeDatabaseContext = $TRUE
         $scripter.Options.IncludeIfNotExists = $TRUE
-
-        $scripter.Options.ScriptSchema = $TRUE
-        $scripter.Options.ScriptData = $FALSE
         $scripter.Options.ScriptDrops = $TRUE
-
-        $scripter.Options.ToFileOnly = $TRUE
-        $scripter.Options.AnsiFile = $TRUE
+        $scripter.Options.AppendToFile = $FALSE
 
         $scripter.Options.FileName = $views_path + $db_object.Name + ".sql"
 
@@ -90,7 +106,6 @@ foreach($db_object in $objects) {
         $scripter.Options.IncludeIfNotExists = $FALSE
         $scripter.Options.ScriptDrops = $FALSE
         $scripter.Options.AppendToFile = $TRUE
-        $scripter.Options.ExtendedProperties = $TRUE
 
         $scripter.Script($db_object)
 
