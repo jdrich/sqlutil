@@ -5,8 +5,8 @@ https://jdrich@github.com/jdrich/sqlutil.git
 
 ## About
 
-The sqlutil repository currently houses only a pair of scripts, pushview and
-pullview. These scripts can be run from cmd.exe or msys/cygwin (use the right
+The sqlutil repository currently houses a pair of scripts, pushobject and
+pullobject. These scripts can be run from cmd.exe or msys/cygwin (use the right
 file for your shell environment). The scripts require SQL Server 2008 Management
 Studio to be installed on the local machine.
 
@@ -14,26 +14,26 @@ Studio to be installed on the local machine.
 
 Make sure that sqlutil/bin is in your PATH.
 
-*All parameters but `--view` are optional*\*
+*All parameters but `--object` and `--type` are optional*\*
 
 Pull a view from the database
 
-    $ pullview.sh --server SOME-SERVER\instance --database some_database --path ~/database --view SomeView
-    Successfully wrote ~/database/views/SomeView.sql
+    $ pullobject.sh --server SOME-SERVER\instance --database some_database --path ~/database --type view --object SomeView
+    Successfully wrote ~/database/view/SomeView.sql
 
-Pull all views from the database
+Pull all tables from the database
 
-    $ pullview.sh --server SOME-SERVER\instance --database some_database --path ~/database --view views-all
-    Successfully wrote ~/database/views/SomeView.sql
-    Successfully wrote ~/database/views/SomeOtherView.sql
-    Successfully wrote ~/database/views/YetAnotherView.sql
+    $ pullobject.sh --server SOME-SERVER\instance --database some_database --path ~/database --type table --object pull-all
+    Successfully wrote ~/database/table/SomeTable.sql
+    Successfully wrote ~/database/table/SomeOtherTable.sql
+    Successfully wrote ~/database/table/YetAnotherTable.sql
 
-The view will be created with a `[use some_database]` statement.
+The object will be created with a `[use some_database]` statement.
 
 Push a single view to the database
 
-    $ pushview.sh --server SOME-SERVER\instance --view ~/database/views/SomeView.sql
-    View at /home/user/database/views/SomeView.sql successfully written to database.
+    $ pushobject.sh --server SOME-SERVER\instance --object ~/database/views/SomeView.sql
+    Object at /home/user/database/views/SomeView.sql successfully written to database.
 
 \**To prevent having to pass optional parameters, create a file config.json one level above the sqlutil bin directory or where you run the script with the following format:*
 
@@ -42,6 +42,8 @@ Push a single view to the database
         "database": $database_name,
         "path": $path_to_database // Must be a windows formatted path.
     }
+
+Currently the database object types supported are `view`, `table`, `function`, and `procedure`.
 
 ## Purpose
 
