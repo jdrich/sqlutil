@@ -7,7 +7,7 @@
 ##
 param(
     [string]$server,
-    [Parameter(Mandatory=$TRUE)][string]$view
+    [Parameter(Mandatory=$TRUE)][string]$object
 )
 
 # Look for configuration files if configuration was not passed.
@@ -36,15 +36,15 @@ if(($server -eq "")) {
     $server = $config.server
 }
 
-$view_file = "FileSystem::" + $view
+$object_file = "FileSystem::" + $object
 
-if (-not (Test-Path $view_file)) {
-    Write-Host "Specified view file does not exist."
+if (-not (Test-Path $object_file)) {
+    Write-Host "Specified object file does not exist."
 } else {
     $failure = $FALSE
 
     Try {
-        Invoke-Sqlcmd -ErrorAction Stop -OutputSqlErrors $true -ServerInstance $server -InputFile $view
+        Invoke-Sqlcmd -ErrorAction Stop -OutputSqlErrors $true -ServerInstance $server -InputFile $object
     } Catch [System.Exception] {
         $failure = $TRUE
 
@@ -52,11 +52,11 @@ if (-not (Test-Path $view_file)) {
     }
 
     if($failure) {
-        Write-Host "View at" $view "was NOT successfully written to database."
+        Write-Host "Object at" $object "was NOT successfully written to database."
         Write-Host "Error:"
 
         throw $exception
     } else {
-        Write-Host "View at" $view "successfully written to database."
+        Write-Host "Object at" $object "successfully written to database."
     }
 }

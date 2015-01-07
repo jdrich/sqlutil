@@ -2,7 +2,10 @@ param(
     [string]$server,
     [string]$database,
     [string]$path,
-    [Parameter(Mandatory=$TRUE)][string]$view
+    [Parameter(Mandatory=$TRUE)]
+    [ValidateSet("view","function","table","procedure")]
+    [string]$type,
+    [Parameter(Mandatory=$TRUE)][string]$object
 )
 
 # Look for configuration files if configuration was not passed.
@@ -35,7 +38,7 @@ if(($server -eq "") -or($database -eq "") -or ($path -eq "")) {
 }
 
 $schema = "dbo"
-$views_path = "$path\views\"
+$views_path = "$path\" + $type + "\"
 
 [System.Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SMO") | out-null
 
@@ -43,17 +46,32 @@ $srv = New-Object "Microsoft.SqlServer.Management.SMO.Server" $server
 $scripter = New-Object "Microsoft.SqlServer.Management.SMO.Scripter" $server
 $objects = $srv.Databases.item($database).Views | Where-object { $_.schema -eq $schema }
 
+switch ($type) {
+    "view" {
+        $objects = $srv.Databases.item($database).Views | Where-object { $_.schema -eq $schema }
+    }
+    "function" {
+        $objects = $srv.Databases.item($database).UserDefinedFunctions  | Where-object { $_.schema -eq $schema }
+    }
+    "table" {
+        $objects = $srv.Databases.item($database).Tables | Where-object { $_.schema -eq $schema }
+    }
+    "procedure" {
+        $objects = $srv.Databases.item($database).StoredProcedures | Where-object { $_.schema -eq $schema }
+    }
+}
+
 
 if (-not (Test-Path $views_path)) {
     [System.IO.Directory]::CreateDirectory($views_path)
 }
 
-if($view -ne "view-all") {
-    $objects = $objects | Where-object { $_.Name -eq $view }
+if($object -ne "pull-all") {
+    $objects = $objects | Where-object { $_.Name -eq $object }
 }
 
-foreach($object in $objects) {
-    if ($object -ne $null) {
+foreach($db_object in $objects) {
+    if ($db_object -ne $null) {
         $scripter.Options.IncludeHeaders  = $TRUE
         $scripter.Options.IncludeDatabaseContext = $TRUE
         $scripter.Options.IncludeIfNotExists = $TRUE
@@ -65,16 +83,16 @@ foreach($object in $objects) {
         $scripter.Options.ToFileOnly = $TRUE
         $scripter.Options.AnsiFile = $TRUE
 
-        $scripter.Options.FileName = $views_path + $object.Name + ".sql"
+        $scripter.Options.FileName = $views_path + $db_object.Name + ".sql"
 
-        $scripter.Script($object)
+        $scripter.Script($db_object)
 
         $scripter.Options.IncludeIfNotExists = $FALSE
         $scripter.Options.ScriptDrops = $FALSE
         $scripter.Options.AppendToFile = $TRUE
         $scripter.Options.ExtendedProperties = $TRUE
 
-        $scripter.Script($object)
+        $scripter.Script($db_object)
 
         Write-Host "Successfully wrote" $scripter.Options.FileName
     } else {
